@@ -44,16 +44,16 @@ x_2 <- seq(0,2*pi, length.out = 12)+1
 x_3 <- seq(0,2*pi, length.out = 12)+3
 x_4 <- seq(0,2*pi, length.out = 12)+5
 
-y_1 <- data.table(x_1, 93*(sin(0.5*(x)))) %>% 
+y_1 <- data.table(x_1, 93*(sin(0.5*(x_1)))) %>% 
   .[, class := "Frühling"] %>% 
   setnames(c("V2","x_1"), c("values","x"))
-y_2 <- data.table(x_2,90.5*(sin(0.5*(x)))) %>% 
+y_2 <- data.table(x_2,90.5*(sin(0.5*(x_1)))) %>% 
   .[, class := "Sommer"] %>% 
   setnames(c("V2","x_2"), c("values","x"))
-y_3 <- data.table(x_3, 88.5*(sin(0.5*(x)))) %>% 
+y_3 <- data.table(x_3, 88.5*(sin(0.5*(x_1)))) %>% 
   .[, class := "Herbst"] %>% 
   setnames(c("V2","x_3"), c("values","x"))
-y_4 <- data.table(x_4, 90.5*(sin(0.5*(x)))) %>% 
+y_4 <- data.table(x_4, 90.5*(sin(0.5*(x_1)))) %>% 
   .[, class := "Winter"] %>% 
   setnames(c("V2","x_4"), c("values","x"))
 pu_5 <- data.table(c(0:11), values_5) %>% 
