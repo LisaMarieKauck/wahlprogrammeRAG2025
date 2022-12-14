@@ -34,7 +34,7 @@ Pu %>%
   ylab("Pünktlichkeit in %") +
   scale_y_continuous(limits = c(50,100), breaks = seq(50,100,10))
   
-ggsave("C:/Users/JohannaKastenberger/Documents/Simpson Effekt Blogpost/DB_plot.png")  
+ggsave("DB_plot.png", width = 15, height = 7, units = "cm")  
 
 
 # Plot inkl. Saisonalität
