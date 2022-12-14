@@ -34,7 +34,7 @@ Pu %>%
   ylab("Pünktlichkeit in %") +
   scale_y_continuous(limits = c(50,100), breaks = seq(50,100,10))
   
-ggsave("C:/Users/JohannaKastenberger/Documents/Simpson Effekt Blogpost/DB_plot.png")  
+ggsave("DB_plot.png")  
 
 
 # Plot inkl. Saisonalität
@@ -86,4 +86,4 @@ data2 %>%
     breaks = seq(0,100,10)) +
   scale_x_discrete(limits = c(0:11), breaks = seq(0,11,1), labels = c("JAN","FEB","MÄR","APR","MAI","JUN","JUL","AUG","SEP","OKT","NOV","DEZ"))
 
-ggsave("C:/Users/JohannaKastenberger/Documents/Simpson Effekt Blogpost/DB_plot_with_seasons.jpg", width = 15, height = 7, units = "cm")  
+ggsave("DB_plot_with_seasons.jpg", width = 15, height = 7, units = "cm")  
