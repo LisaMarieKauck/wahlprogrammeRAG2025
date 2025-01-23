@@ -9,6 +9,9 @@ from langchain_openai import OpenAIEmbeddings
 #from langchain_community.llms import OpenAI
 from langchain_openai import ChatOpenAI
 import openai
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.output_parsers import StrOutputParser
+from operator import itemgetter
 
 # Set Streamlit page configuration
 st.set_page_config(layout="wide")
@@ -16,12 +19,12 @@ st.set_page_config(layout="wide")
 # Party documents
 parties = {
     "BSW": "pdf/BSW_Wahlprogramm_2025__Entwurf_.pdf",
-  #  "SPD": "pdf/BTW_2025_SPD_Regierungsprogramm.pdf",
-  #  "DieLINKE": "pdf/btw_2025_wahlprogramm_die_linke.pdf",
-  #  "FDP": "pdf/BTW_2025_Wahlprogramm_FDP_Entwurf.pdf",
-  #  "Green": "pdf/BTW_2025_Wahlprogramm_Grüne_Entwurf.pdf",
-  #  "Union": "pdf/btw_2025_wahlprogramm-cdu-csu.pdf",
-  #  "AfD": "pdf/Ich_kotze_gleich_Leitantrag-Bundestagswahlprogramm-2025.pdf"
+    "SPD": "pdf/BTW_2025_SPD_Regierungsprogramm.pdf",
+    "DieLINKE": "pdf/btw_2025_wahlprogramm_die_linke.pdf",
+    "FDP": "pdf/BTW_2025_Wahlprogramm_FDP_Entwurf.pdf",
+    "Green": "pdf/BTW_2025_Wahlprogramm_Grüne_Entwurf.pdf",
+    "Union": "pdf/btw_2025_wahlprogramm-cdu-csu.pdf",
+    "AfD": "pdf/Ich_kotze_gleich_Leitantrag-Bundestagswahlprogramm-2025.pdf"
 }
 
 
@@ -45,8 +48,49 @@ def create_vectorstore(path):
 
 def setup_retrieval_qa(vectorstore):
     llm = ChatOpenAI(temperature=0.7)
-    qa = RetrievalQA.from_chain_type(llm=llm, retriever=vectorstore.as_retriever(), chain_type="stuff", return_source_documents=True)
+    qa = RetrievalQA.from_chain_type(llm=llm, retriever=vectorstore.as_retriever(search_kwargs={"k":5}), chain_type="stuff", return_source_documents=True)
     return qa
+
+test_prompt =  """Du bist ein kritischer KI-Assistent, der auf Wahlprogramme deutscher Parteien spezialisiert ist.
+                                Gib präzise, klare und fundierte Antworten auf Basis des bereitgestellten Kontextes.
+                                Verschönere nichts, sondern gib nur die Stellungen der jeweiligen Partei wieder.
+                                Wenn du dich auf spezifische Abschnitte oder Themen aus den Wahlprogrammen beziehst, erwähne dies explizit in deiner Antwort.
+                 Benutze den folgenden Kontext:\n{context}\n\n 
+                 um diese Frage zu beantworten: {question}\n\nBitte geben Sie eine klare Antwort, die sich auf den Kontext stützt, und erwähnen Sie relevante Artikel oder Abschnitte."""
+
+prompt=ChatPromptTemplate.from_template(test_prompt)
+print(prompt.invoke)
+
+def invoke_rag_chain(pdf_path): 
+    rag_chain = (
+        { 
+            "context": itemgetter("question") | create_vectorstore(pdf_path).as_retriever(search_kwargs={"k":3}), 
+            "question":itemgetter("question"),
+            "lang": itemgetter("lang"),
+        }
+        | prompt
+        | ChatOpenAI(temperature=0.7)
+        | StrOutputParser()
+    )
+    question = "Worum geht es? "
+    lang = "German"
+    query = { 
+        "question":question, 
+        "lang":lang,
+    }
+    
+    answer = rag_chain.invoke(query)
+    return answer
+
+for i, j in parties.items():
+    ans = invoke_rag_chain(j)
+    print(f"\n########## {i} ###########\n")
+    print(ans)
+
+
+
+
+'''
 
 
 # Initialize session state
@@ -88,8 +132,8 @@ for col, (party, document_name) in zip(columns, parties.items()):
         if prompt:
             with st.spinner(f"Generiere Antwort für {party}..."):
                 try:
-                    retriever = vectorstore.as_retriever()
-                    retrieved_docs = retriever.get_relevant_documents(prompt)
+                    #retriever = vectorstore.as_retriever()
+                    #retrieved_docs = retriever.get_relevant_documents(prompt)
                     context = "\n".join([doc.page_content for doc in retrieved_docs])
                     print("--------Check-----")
                     qa_result = st.session_state[party]["qa_system"].run(prompt)
@@ -106,7 +150,7 @@ for col, (party, document_name) in zip(columns, parties.items()):
                                 Verschönere nichts, sondern gib nur die Stellungen der jeweiligen Partei wieder.
                                 Wenn du dich auf spezifische Abschnitte oder Themen aus den Wahlprogrammen beziehst, erwähne dies explizit in deiner Antwort.""")},
                 {"role": "user",
-                    "content": f"Kontext:\n{context}\n\nFrage: {prompt}\n\nBitte geben Sie eine klare Antwort, die sich auf den Kontext stützt, und erwähnen Sie gegebenenfalls relevante Artikel oder Abschnitte.“"}
+                    "content": f"Kontext:\n{context}\n\nFrage: {question}\n\nBitte geben Sie eine klare Antwort, die sich auf den Kontext stützt, und erwähnen Sie gegebenenfalls relevante Artikel oder Abschnitte.“"}
             ]
             st.session_state.messages[party].append({"role": "user", "content": prompt})
             st.session_state.messages[party].append({"role": "user", "content": answer})
@@ -177,3 +221,5 @@ with st.sidebar:
                     st.markdown(f"**Source**: {ref.metadata.get('source', 'N/A')}")
                     st.markdown(f"**Section**: {ref.metadata.get('section', 'N/A')}")
                     st.text(ref.page_content)
+
+'''
