@@ -9,15 +9,15 @@ parties = {
     "BSW": "pdf/BSW_Wahlprogramm_2025__Entwurf_.pdf",
     "SPD": "pdf/BTW_2025_SPD_Regierungsprogramm.pdf",
     "DieLINKE": "pdf/btw_2025_wahlprogramm_die_linke.pdf",
-    "FDP": "pdf/BTW_Wahlprogramm_FDP_2025_Entwurf.pdf",
-    "Green": "pdf/BTW_Wahlprogramm_Grüne_2025_Entwurf.pdf",
+    "FDP": "pdf/BTW_2025_Wahlprogramm_FDP_Entwurf.pdf",
+    "Green": "pdf/BTW_2025_Wahlprogramm_Grüne_Entwurf.pdf",
     "Union": "pdf/btw_2025_wahlprogramm-cdu-csu.pdf",
     "AfD": "pdf/Ich_kotze_gleich_Leitantrag-Bundestagswahlprogramm-2025.pdf"
 }
 
 # Initialize session state
 if "messages" not in st.session_state:
-    st.session_state.messages = {party: "" for party in parties}
+    st.session_state.messages = {party: [] for party in parties}
 if "party_references" not in st.session_state:
     st.session_state.party_references = {party: [] for party in parties}
 
@@ -41,7 +41,7 @@ for col, (party, document_name) in zip(columns, parties.items()):
             with col:
                 with st.chat_message("user"):
                     st.markdown(prompt)
-                st.session_state.messages.append({"role": "user", "content": prompt})
+                st.session_state.messages[party].append({"role": "user", "content": prompt})
                 try:
                     with st.chat_message("assistant"):
                         with st.spinner(f"Generiere Antwort für {party}..."):
