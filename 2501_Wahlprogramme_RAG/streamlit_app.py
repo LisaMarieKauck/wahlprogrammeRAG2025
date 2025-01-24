@@ -12,19 +12,21 @@ import openai
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from operator import itemgetter
+from langchain.chains import create_retrieval_chain
+from langchain.chains.combine_documents import create_stuff_documents_chain
 
 # Set Streamlit page configuration
 st.set_page_config(layout="wide")
 
 # Party documents
 parties = {
-    "BSW": "pdf/BSW_Wahlprogramm_2025__Entwurf_.pdf",
-    "SPD": "pdf/BTW_2025_SPD_Regierungsprogramm.pdf",
-    "DieLINKE": "pdf/btw_2025_wahlprogramm_die_linke.pdf",
+  #  "BSW": "pdf/BSW_Wahlprogramm_2025__Entwurf_.pdf",
+  #  "SPD": "pdf/BTW_2025_SPD_Regierungsprogramm.pdf",
+  #  "DieLINKE": "pdf/btw_2025_wahlprogramm_die_linke.pdf",
     "FDP": "pdf/BTW_2025_Wahlprogramm_FDP_Entwurf.pdf",
-    "Green": "pdf/BTW_2025_Wahlprogramm_Grüne_Entwurf.pdf",
-    "Union": "pdf/btw_2025_wahlprogramm-cdu-csu.pdf",
-    "AfD": "pdf/Ich_kotze_gleich_Leitantrag-Bundestagswahlprogramm-2025.pdf"
+   # "Green": "pdf/BTW_2025_Wahlprogramm_Grüne_Entwurf.pdf",
+   # "Union": "pdf/btw_2025_wahlprogramm-cdu-csu.pdf",
+   # "AfD": "pdf/Ich_kotze_gleich_Leitantrag-Bundestagswahlprogramm-2025.pdf"
 }
 
 
@@ -54,9 +56,11 @@ def setup_retrieval_qa(vectorstore):
 test_prompt =  """Du bist ein kritischer KI-Assistent, der auf Wahlprogramme deutscher Parteien spezialisiert ist.
                                 Gib präzise, klare und fundierte Antworten auf Basis des bereitgestellten Kontextes.
                                 Verschönere nichts, sondern gib nur die Stellungen der jeweiligen Partei wieder.
+                                Wenn du keine Antwort kennst, sage, dass du es nicht weißt.
                                 Wenn du dich auf spezifische Abschnitte oder Themen aus den Wahlprogrammen beziehst, erwähne dies explizit in deiner Antwort.
-                 Benutze den folgenden Kontext:\n{context}\n\n 
-                 um diese Frage zu beantworten: {question}\n\nBitte geben Sie eine klare Antwort, die sich auf den Kontext stützt, und erwähnen Sie relevante Artikel oder Abschnitte."""
+                 Kontext:\n{context}\n\n 
+                 Frage:\n {input}\n\n
+                 Bitte geben Sie eine klare Antwort, die sich auf den Kontext stützt, und erwähnen Sie relevante Artikel oder Abschnitte."""
 
 prompt=ChatPromptTemplate.from_template(test_prompt)
 print(prompt.invoke)
@@ -82,11 +86,26 @@ def invoke_rag_chain(pdf_path):
     answer = rag_chain.invoke(query)
     return answer
 
-for i, j in parties.items():
-    ans = invoke_rag_chain(j)
-    print(f"\n########## {i} ###########\n")
-    print(ans)
+#for i, j in parties.items():
+ #   ans = invoke_rag_chain(j)
+  #  print(f"\n########## {i} ###########\n")
+   # print(ans)
 
+
+def invoke_rag_chain_2(pdf_path):
+    combine_docs_chain = create_stuff_documents_chain(ChatOpenAI(temperature=0.7), prompt)
+    rag_chain = create_retrieval_chain(create_vectorstore(pdf_path).as_retriever(search_kwargs={"k":3}), combine_docs_chain)
+    answer = rag_chain.invoke({"input": "Wie wird Bildung gestärkt?"})
+    return answer
+
+for i, j in parties.items():
+    ans = invoke_rag_chain_2(j)
+    print(f"\n########## {i} ###########\n")
+    print(ans.get("answer"))
+    print(f"\n------ Kontext! -------\n")
+    print(ans["context"][0].page_content)
+    print(f"\n------ Page: -------\n")
+    print(ans["context"][0].metadata["page"])
 
 
 
