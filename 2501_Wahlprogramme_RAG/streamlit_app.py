@@ -1,4 +1,6 @@
 import streamlit as st
+import json
+import datetime
 from rag_system import invoke_rag_chain, parties, create_vectorstore, setup_retrieval
 
 # Set Streamlit page configuration
@@ -72,9 +74,6 @@ for col, (party, document_name) in zip(columns, parties.items()):
                     st.markdown(f"**Seite**: {ref.metadata.get('page', 'N/A')}")
                     st.text(ref.page_content)
 
-            
-
-
 
 # Sidebar
 with st.sidebar:
@@ -100,24 +99,48 @@ with st.sidebar:
     st.markdown("### Example Questions")
     example_questions = [
         'Was sind die zentralen Themen im Wahlprogramm von die Partei?',
-        'Verwendet die Partei amtliche Statistiken, um ihre Punkte zu unterstützen?',
+        'Analysiere das Wahlprogramm der Partei. Untersuche dabei insbesondere:' 
+        'Nutzung von Statistiken, Zahlen und Daten: Werden in dem Programm Statistiken, Zahlen oder Daten verwendet, um die politischen Positionen oder Argumente der Partei zu untermauern? Falls ja, nenne Beispiele.'
+        'Selektive Darstellung: Werden die Statistiken selektiv dargestellt oder interpretiert, sodass eine potenzielle Verzerrung oder Manipulation der Argumentation entsteht? Begründe deine Einschätzung und nenne Beispiele für mögliche Verzerrungen.',
         'Welche Maßnahmen schlägt die Partei zur Förderung erneuerbarer Energien vor?',
         'Wie plant die Partei, das Bildungssystem in Deutschland zu verbessern?',
         'Welche Position hat die Partei zur Aufnahme von Geflüchteten?'
     ]
-    for question in example_questions:
-        if st.button(question):
-            # Simulate clicking the question
-            st.session_state.messages[party].append({"role": "user", "content": question})
-            try:
-                retriever = st.session_state.retriever[party]
-                output = invoke_rag_chain(retriever, query)
-                #answer = output
-                answer = output["answer"]
-                context = output["context"]
-                st.session_state.messages[party].append({"role": "assistant", "content": answer})
-                st.session_state.party_references[party] = context
-                st.rerun()
-            except Exception as e:
-                st.error(f"Fehler! {str(e)}")
+    st.markdown(example_questions)
+    # for question in example_questions:
+    #     if st.button(question):
+    #         # Simulate clicking the question
+    #         st.session_state.messages[party].append({"role": "user", "content": question})
+    #         try:
+    #             retriever = st.session_state.retriever[party]
+    #             output = invoke_rag_chain(retriever, query)
+    #             #answer = output
+    #             answer = output["answer"]
+    #             context = output["context"]
+    #             st.session_state.messages[party].append({"role": "assistant", "content": answer})
+    #             st.session_state.party_references[party] = context
+    #             st.rerun()
+    #         except Exception as e:
+    #             st.error(f"Fehler! {str(e)}")
 
+    #if st.button("Export Data"):
+        # Prepare the data for export
+     #   export_data = {
+      #      "messages": st.session_state.messages,
+       #     "party_references": st.session_state.party_references,
+        #}
+
+        # Convert to JSON format
+       # export_json = json.dumps(export_data, indent=4, ensure_ascii=False)
+
+        # Define the filename
+        #now = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+        #filename = f"chat_data_{now}.json"
+
+        # Use Streamlit's file download feature
+        #st.download_button(
+         #   label="Download JSON File",
+          #  data=export_json,
+           # file_name=filename,
+            #mime="application/json"
+        #)

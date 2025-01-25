@@ -15,6 +15,7 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 
+
 # Party documents
 parties = {
     "BSW": "pdf/BSW_Wahlprogramm_2025__Entwurf_.pdf",
