@@ -77,7 +77,7 @@ for col, (party, document_name) in zip(columns, parties.items()):
 # Sidebar
 with st.sidebar:
     if st.button("Clear Chat History"):
-        st.session_state.party_answers = {party: "" for party in parties}
+        st.session_state.messages = {party: "" for party in parties}
         st.session_state.party_references = {party: [] for party in parties}
         st.rerun()
 
