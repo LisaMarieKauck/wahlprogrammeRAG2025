@@ -95,33 +95,41 @@ with st.sidebar:
     """)
 
     # Example Questions with clickable functionality
+    
+   # st.markdown(questions)
     st.markdown("### Example Questions")
     example_questions = [
-        'Was sind die zentralen Themen im Wahlprogramm von die Partei?',
-        'Analysiere das Wahlprogramm der Partei. Untersuche dabei insbesondere:' 
-        'Nutzung von Statistiken, Zahlen und Daten: Werden in dem Programm Statistiken, Zahlen oder Daten verwendet, um die politischen Positionen oder Argumente der Partei zu untermauern? Falls ja, nenne Beispiele.'
-        'Selektive Darstellung: Werden die Statistiken selektiv dargestellt oder interpretiert, sodass eine potenzielle Verzerrung oder Manipulation der Argumentation entsteht? Begründe deine Einschätzung und nenne Beispiele für mögliche Verzerrungen.',
-        'Welche Maßnahmen schlägt die Partei zur Förderung erneuerbarer Energien vor?',
-        'Wie plant die Partei, das Bildungssystem in Deutschland zu verbessern?',
-        'Welche Position hat die Partei zur Aufnahme von Geflüchteten?'
+        "Was sind die zentralen Themen im Wahlprogramm von die Partei?",
+        "Analysiere das Wahlprogramm der Partei. Untersuche dabei insbesondere:\n Nutzung von Statistiken, Zahlen und Daten: Werden in dem Programm Statistiken, Zahlen oder Daten verwendet, um die politischen Positionen oder Argumente der Partei zu untermauern? Falls ja, nenne Beispiele.\n Selektive Darstellung: Werden die Statistiken selektiv dargestellt oder interpretiert, sodass eine potenzielle Verzerrung oder Manipulation der Argumentation entsteht? Begründe deine Einschätzung und nenne Beispiele für mögliche Verzerrungen.",
+        "Welche Maßnahmen schlägt die Partei zur Förderung erneuerbarer Energien vor?",
+        "Wie plant die Partei, das Bildungssystem in Deutschland zu verbessern?",
+        "Welche Position hat die Partei zur Aufnahme von Geflüchteten?"
     ]
-    st.markdown(example_questions)
-    # for question in example_questions:
-    #     if st.button(question):
-    #         # Simulate clicking the question
-    #         st.session_state.messages[party].append({"role": "user", "content": question})
-    #         try:
-    #             retriever = st.session_state.retriever[party]
-    #             output = invoke_rag_chain(retriever, query)
-    #             #answer = output
-    #             answer = output["answer"]
-    #             context = output["context"]
-    #             st.session_state.messages[party].append({"role": "assistant", "content": answer})
-    #             st.session_state.party_references[party] = context
-    #             st.rerun()
-    #         except Exception as e:
-    #             st.error(f"Fehler! {str(e)}")
 
+    for question in example_questions:
+        if st.button(question):
+            # Simulate clicking the question
+            query = question
+            for (party, document_name) in parties.items():
+                st.session_state.messages[party].append({"role": "user", "content": query})
+                try:
+                    if not st.session_state.vectorstore[party]:
+                        vectorestore = create_vectorstore(document_name)
+                        st.session_state.vectorstore[party] = vectorestore
+                        st.session_state.retriever[party] = setup_retrieval(vectorestore)
+
+                    retriever = st.session_state.retriever[party]
+                    output = invoke_rag_chain(retriever, query)
+                    answer = output["answer"]
+                    context = output["context"]
+
+                    st.session_state.messages[party].append({"role": "assistant", "content": answer})
+                    st.session_state.party_references[party] = context
+                except AttributeError as e:
+                    st.error(f"Fehler! {e}")
+                    st.session_state.messages[party].append({"role": "assistant", "content": "Sorry, hat nicht geklappt."})
+            st.rerun()
+                
     #if st.button("Export Data"):
         # Prepare the data for export
      #   export_data = {
