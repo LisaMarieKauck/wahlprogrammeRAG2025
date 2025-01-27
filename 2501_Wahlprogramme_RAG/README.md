@@ -1,12 +1,12 @@
-# EU AI Act Chat Assistant
+# Wahlprogramme 2025 Chat Assistant
 
-This project provides an interactive Streamlit-based chat assistant designed to answer questions about the EU AI Act. It leverages a retrieval-augmented generation (RAG) system to fetch and present relevant information from the EU AI Act documents, using OpenAI and ChromaDB for document embedding and search functionalities.
+This project provides an interactive Streamlit-based chat assistant designed to answer questions about all Wahlprogramme for the Bundestagswahl 2025. It leverages a retrieval-augmented generation (RAG) system to fetch and present relevant information from the EU AI Act documents, using OpenAI and FAISS for document embedding and search functionalities. It is based on https://github.com/ingridstevens/EUAIAct:
 
 ![EU AI Act Chat Assistant](assets/euaiact-rag-chat.png)
 
 ## Features
-- **Interactive Chat Interface**: Users can ask questions about the EU AI Act and receive real-time answers from the assistant.
-- **Reference Retrieval**: Provides references to relevant sections of the EU AI Act document in response to user queries.
+- **Interactive Chat Interface**: Users can ask single questions about the election 2025 and receive 7 real-time answers from the assistant for each Wahlprogramm.
+- **Reference Retrieval**: Provides references to relevant sections of the respective document in response to user queries for the latest query.
 - **Clear Chat History**: Users can reset their chat history at any time.
 - **Sample Questions**: The sidebar includes sample questions for quick reference.
 - **Document Overview**: Summarizes available documents in the sidebar for easy access.
@@ -16,7 +16,7 @@ This project provides an interactive Streamlit-based chat assistant designed to 
 ## Project Structure
 
 - **streamlit_app.py**: Defines the chat UI in Streamlit, handles chat history, and displays references.
-- **rag_system.py**: Manages the RAG system by embedding and storing the EU AI Act document and querying relevant sections for answers.
+- **rag_system.py**: Manages the RAG system by defining functions for embedding and storing the documents and querying relevant sections for answers.
 
 ---
 
@@ -31,14 +31,14 @@ This project provides an interactive Streamlit-based chat assistant designed to 
 #### Windows
 ```bash
 # Clone the repository and navigate to the project directory
-git clone https://github.com/ingridstevens/EUAIAct
-cd EUAIAct
+git clone https://git.statup.company/Projekte/blogbeitraege.git
+cd blogbeitraege/2501_Wahlprogramme_RAG
 
 # Create a virtual environment
-python -m venv env
+python -m venv venvRAGwahlprogramm
 
 # Activate the virtual environment
-env\Scripts\activate
+.\venvRAGwahlprogramm\Scripts\activate
 
 # Install dependencies
 pip install -r requirements.txt
@@ -47,14 +47,14 @@ pip install -r requirements.txt
 #### macOS / Linux
 ```bash
 # Clone the repository and navigate to the project directory
-git clone https://github.com/ingridstevens/EUAIAct
-cd EUAIAct
+git clone https://git.statup.company/Projekte/blogbeitraege.git
+cd blogbeitraege/2501_Wahlprogramme_RAG
 
 # Create a virtual environment
-python3 -m venv env
+python3 -m venv venvRAGwahlprogramm
 
 # Activate the virtual environment
-source env/bin/activate
+source venvRAGwahlprogramm/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
@@ -72,8 +72,8 @@ pip install -r requirements.txt
 
 ### Start the Chat Application
 1. Activate your virtual environment:
-   - **Windows**: `env\Scripts\activate`
-   - **macOS/Linux**: `source env/bin/activate`
+   - **Windows**: `venvRAGwahlprogramm\Scripts\activate`
+   - **macOS/Linux**: `source venvRAGwahlprogramm/bin/activate`
 2. Run the Streamlit app:
    ```bash
    streamlit run streamlit_app.py
@@ -90,7 +90,7 @@ pip install -r requirements.txt
 - **Sidebar**: Contains options to clear chat history, view example questions, and reference current documents.
 
 ### RAG System (`rag_system.py`)
-- **Document Embedding and Search**: The EU AI Act document is embedded and stored in ChromaDB. The system retrieves relevant sections when a query is made.
+- **Document Embedding and Search**: The Wahlprogramme documents are embedded and stored in FAISS. The system retrieves relevant sections when a query is made.
 - **Answer Generation**: Constructs a response based on relevant document excerpts and the question, using the OpenAI API.
 
 ---
@@ -98,14 +98,14 @@ pip install -r requirements.txt
 ## Example Usage
 
 1. Launch the app with `streamlit run streamlit_app.py`.
-2. Ask questions like “What is the EU AI Act?” or “What are high-risk AI systems?”
-3. The assistant responds, providing references to specific parts of the EU AI Act.
+2. Ask questions like “"Welche Maßnahmen schlägt die Partei zur Förderung erneuerbarer Energien vor?" or "Wie plant die Partei, das Bildungssystem in Deutschland zu verbessern?"
+3. The assistant responds, providing references to specific parts of the respective documents.
 
 ---
 
 ## Notes
 
-- Ensure you have the `EU_AI_Act.pdf` document in the project directory for document embedding.
+- Ensure you have a folder "pdf" with all the Wahlprogrrame documents in the project directory for document embedding.
 - This project uses the `gpt-4o-mini` model for faster responses. Ensure the model is specified correctly in the OpenAI API setup.
 
 ---
