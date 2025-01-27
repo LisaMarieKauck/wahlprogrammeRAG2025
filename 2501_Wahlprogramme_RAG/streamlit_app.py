@@ -16,7 +16,6 @@ if "vectorstore" not in st.session_state:
 if "retriever" not in st.session_state:
     st.session_state.retriever = {party: [] for party in parties}
 
-
 # Main interface
 st.title("Wahlprogramme Chat Assistant")
 st.write("Chat with German political party programs for 2025!")
@@ -27,10 +26,6 @@ st.write("Chat with German political party programs for 2025!")
 # Dynamic columns for party answers
 columns = st.columns(len(parties))
 for col, (party, document_name) in zip(columns, parties.items()):
-    vectorestore = create_vectorstore(document_name)
-    st.session_state.vectorstore[party] = vectorestore
-    st.session_state.retriever[party] = setup_retrieval(vectorestore)
-
     with col:
         st.subheader(party)
 
@@ -50,6 +45,10 @@ for col, (party, document_name) in zip(columns, parties.items()):
             with st.chat_message("user"):
                 st.markdown(query)
             st.session_state.messages[party].append({"role": "user", "content": query})
+            if not st.session_state.vectorstore[party]:
+                vectorestore = create_vectorstore(document_name)
+                st.session_state.vectorstore[party] = vectorestore
+                st.session_state.retriever[party] = setup_retrieval(vectorestore)
             try:
                  with st.chat_message("assistant"):
                     with st.spinner(f"Generiere Antwort für {party}..."):
