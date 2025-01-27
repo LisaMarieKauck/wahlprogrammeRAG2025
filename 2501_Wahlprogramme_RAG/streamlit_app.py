@@ -129,6 +129,14 @@ with st.sidebar:
                     st.error(f"Fehler! {e}")
                     st.session_state.messages[party].append({"role": "assistant", "content": "Sorry, hat nicht geklappt."})
             st.rerun()
+
+    # Document Overview
+    st.markdown("### Document Overview")
+    with st.expander("📚 Available Documents"):
+        for (party, path) in parties.items():
+            st.markdown(f"**{party}**:"
+                        f"\n- {path}"
+                        "\n- Latest Version: 2025")
                 
     #if st.button("Export Data"):
         # Prepare the data for export
