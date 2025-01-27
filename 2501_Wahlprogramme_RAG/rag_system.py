@@ -41,7 +41,7 @@ embedding_function = OpenAIEmbeddings(model="text-embedding-3-large", api_key=OP
 # Text-Splitter konfigurieren
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=75)
 # LLM
-llm = ChatOpenAI(temperature=0.7)
+llm = ChatOpenAI(temperature=0.5)
 
 def create_vectorstore(path):
     loader = PyPDFLoader(path)
