@@ -4,7 +4,6 @@ from langchain.chains import RetrievalQA
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
-#from langchain_community.llms import OpenAI
 from langchain_openai import ChatOpenAI
 import openai
 from langchain_core.prompts import ChatPromptTemplate
@@ -44,7 +43,7 @@ client = openai.OpenAI(
 )
 
 # Initialize OpenAI embeddings
-embedding_function = OpenAIEmbeddings(model="llama-3.3-70b-versatile")
+embedding_function = OpenAIEmbeddings(model="text-embedding-3-large")
 # Text-Splitter konfigurieren
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=75)
 # LLM
