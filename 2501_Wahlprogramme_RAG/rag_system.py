@@ -13,6 +13,7 @@ from operator import itemgetter
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from groq import Groq
 
 
 
@@ -30,14 +31,20 @@ parties = {
 
 # Load environment variables
 load_dotenv()
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+#OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 #client = OpenAI(
 #  api_key=os.environ['OPENAI_API_KEY'],  # this is also the default, it can be omitted
 #)
-openai.api_key = OPENAI_API_KEY
+#openai.api_key = OPENAI_API_KEY
+
+#groq
+client = openai.OpenAI(
+    base_url="https://api.groq.com/openai/v1",
+    api_key=os.environ.get("GROQ_API_KEY")
+)
 
 # Initialize OpenAI embeddings
-embedding_function = OpenAIEmbeddings(model="text-embedding-3-large", api_key=OPENAI_API_KEY)
+embedding_function = OpenAIEmbeddings(model="llama-3.3-70b-versatile")
 # Text-Splitter konfigurieren
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=75)
 # LLM
