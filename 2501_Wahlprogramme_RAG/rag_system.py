@@ -1,4 +1,4 @@
-import os
+#import os
 from dotenv import load_dotenv
 from langchain.chains import RetrievalQA
 from langchain_community.document_loaders import PyPDFLoader
@@ -18,15 +18,14 @@ from groq import Groq
 
 # Party documents
 parties = {
-    "BSW": "pdf/BSW_Wahlprogramm_2025__Entwurf_.pdf",
-    "SPD": "pdf/BTW_2025_SPD_Regierungsprogramm.pdf",
-    "DieLINKE": "pdf/btw_2025_wahlprogramm_die_linke.pdf",
-    "FDP": "pdf/BTW_2025_Wahlprogramm_FDP_Entwurf.pdf",
-    "Gruene": "pdf/BTW_2025_Wahlprogramm_Grüne_Entwurf.pdf",
-    "Union": "pdf/btw_2025_wahlprogramm-cdu-csu.pdf",
-    "AfD": "pdf/Ich_kotze_gleich_Leitantrag-Bundestagswahlprogramm-2025.pdf"
+    "BSW": {'path': "pdf/BSW_Wahlprogramm_2025__Entwurf_.pdf", 'name': "BSW"},
+    "SPD": {'path': "pdf/BTW_2025_SPD_Regierungsprogramm.pdf", 'name': "SPD"},
+    "DieLINKE": {'path': "pdf/btw_2025_wahlprogramm_die_linke.pdf", 'name': "Die LINKE"},
+    "FDP": {'path': "pdf/BTW_2025_Wahlprogramm_FDP_Entwurf.pdf", 'name': "FDP"},
+    "Gruene": {'path': "pdf/BTW_2025_Wahlprogramm_Grüne_Entwurf.pdf", 'name': "Bündnis90/Die Grünen"},
+    "Union": {'path': "pdf/btw_2025_wahlprogramm-cdu-csu.pdf", 'name': "Union"},
+    "AfD": {'path': "pdf/Ich_kotze_gleich_Leitantrag-Bundestagswahlprogramm-2025.pdf", 'name': "AfD"}
 }
-
 
 # Load environment variables
 load_dotenv()
@@ -36,18 +35,13 @@ load_dotenv()
 #)
 #openai.api_key = OPENAI_API_KEY
 
-#groq
-client = openai.OpenAI(
-    base_url="https://api.groq.com/openai/v1",
-    api_key=os.environ.get("GROQ_API_KEY")
-)
 
 # Initialize OpenAI embeddings
 embedding_function = OpenAIEmbeddings(model="text-embedding-3-large")
 # Text-Splitter konfigurieren
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=75)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
 # LLM
-llm = ChatOpenAI(temperature=0.5)
+llm = ChatOpenAI(temperature=0.7)
 
 def create_vectorstore(path):
     loader = PyPDFLoader(path)
@@ -79,14 +73,4 @@ def invoke_rag_chain(retriever, question):
     answer = rag_chain.invoke({"input": question})
     return answer
 
-#question = "Wie werden Frauenrechte gestärkt?"
 
-'''for i, j in parties.items():
-    ans = invoke_rag_chain(j, question)
-    print(f"\n########## {i} ###########\n")
-    print(ans.get("answer"))
-    print(f"\n------ Kontext! -------\n")
-    print(ans["context"][0].page_content)
-    print(f"\n------ Page: -------\n")
-    print(ans["context"][0].metadata["page"])
-'''

@@ -1,4 +1,6 @@
 import streamlit as st
+import openai
+from groq import Groq
 from rag_system import invoke_rag_chain, parties, create_vectorstore, setup_retrieval
 
 # Set Streamlit page configuration
@@ -13,26 +15,42 @@ if "vectorstore" not in st.session_state:
     st.session_state.vectorstore = {party: [] for party in parties}
 if "retriever" not in st.session_state:
     st.session_state.retriever = {party: [] for party in parties}
+if "api_key" not in st.session_state:
+    st.write("API Key is missing")
+    st.session_state.api_key=""
 
 # Main interface
 st.title("Wahlprogramme Chat Assistant")
-st.write("Chat with German political party programs for 2025!")
+st.write("Chat mit den Wahlprogrammen für die Bundestagswahl 2025!")
 
 # Prompt the user to enter their API key
-api_key = st.text_input("Enter your API key:", type="password")
-
-if "api_key" not in st.session_state:
+apikey = st.form("user_api_key")
+api_key = apikey.text_input("Kopiere hier deinen Groq API Key rein:", type="password")
+submit = apikey.form_submit_button('Enter')
+if submit:
     st.session_state.api_key = api_key
+    apikey.success("API Key erfolgreich eingfügt.")
+else:
+    if not st.session_state.api_key:
+        apikey.warning("Es fehlt noch ein API Key.", icon="⚠️")
+
+
+#groq
+client = openai.OpenAI(
+    base_url="https://api.groq.com/openai/v1",
+    api_key=st.session_state.api_key
+)
 
 #st.subheader("st.session_state object:") 
-st.session_state
+#st.session_state
 
 # Dynamic columns for party answers
 columns = st.columns(len(parties))
-for col, (party, document_name) in zip(columns, parties.items()):
+for col, (party, document) in zip(columns, parties.items()):
     with col:
+        parteiname = document['name']
         header = st.container()
-        header.subheader(party)
+        header.subheader(parteiname)
         header.write("""<div class='fixed-header'/>""", unsafe_allow_html=True)
 
         ### Custom CSS for the sticky header
@@ -62,8 +80,8 @@ for col, (party, document_name) in zip(columns, parties.items()):
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
 
-
-for col, (party, document_name) in zip(columns, parties.items()):
+for col, (party, document) in zip(columns, parties.items()):
+    document_name, parteiname = document.values()
     if query:
         with col:
             with st.chat_message("user"):
@@ -75,7 +93,7 @@ for col, (party, document_name) in zip(columns, parties.items()):
                 st.session_state.retriever[party] = setup_retrieval(vectorestore)
             try:
                  with st.chat_message("assistant"):
-                    with st.spinner(f"Generiere Antwort für {party}..."):
+                    with st.spinner(f"Generiere Antwort für {parteiname}..."):
                         retriever = st.session_state.retriever[party]
                         output = invoke_rag_chain(retriever, query)
                         #answer = output
@@ -106,25 +124,30 @@ with st.sidebar:
         st.rerun()
 
     st.markdown("### Über diese App")
-    st.write("Stellen Sie Fragen zu den Wahlprogrammen deutscher Parteien.")
+    st.write("Stellen Sie Fragen zu den Wahlprogrammen deutscher Parteien für die Bundestagswahl 2025.")
 
     st.markdown("""
-    ### About
-    This is an AI assistant specialized in answering questions about German Wahlprogramme for 2025
-    
-    ### Tips
-    - Ask specific questions
-    - You can ask follow-up questions
-    - Clear the chat history using the button above
+    ### Anleitung
+    1. Account of https://console.groq.com/ anlegen
+    2. Zum Reiter API Keys wechseln 
+    3. Auf die Schaltfläche mit der Aufschrift „Create API-Key“ klicken.
+    4. Benennen des API-Schlüssels
+    5. API-Key kopieren (er wird danach nicht noch einmal angezeigt)
+    3. In diese App einfügen und Enter drücken
+    4. Loslegen!            
+
+    ### Tipps
+    - Spezifische Fragen stellen
+    - Im Anschluss Follow-up Fragen 
+    - Den Chatverlauf mit dem obigen Knopf löschen
     """)
 
     # Example Questions with clickable functionality
     
    # st.markdown(questions)
-    st.markdown("### Example Questions")
+    st.markdown("### Beispielfragen")
     example_questions = [
-        "Was sind die zentralen Themen im Wahlprogramm von die Partei?",
-        "Analysiere das Wahlprogramm der Partei. Untersuche dabei insbesondere:\n Nutzung von Statistiken, Zahlen und Daten: Werden in dem Programm Statistiken, Zahlen oder Daten verwendet, um die politischen Positionen oder Argumente der Partei zu untermauern? Falls ja, nenne Beispiele.\n Selektive Darstellung: Werden die Statistiken selektiv dargestellt oder interpretiert, sodass eine potenzielle Verzerrung oder Manipulation der Argumentation entsteht? Begründe deine Einschätzung und nenne Beispiele für mögliche Verzerrungen.",
+        "Was sind die zentralen Themen im Wahlprogramm von der Partei?",
         "Welche Maßnahmen schlägt die Partei zur Förderung erneuerbarer Energien vor?",
         "Wie plant die Partei, das Bildungssystem in Deutschland zu verbessern?",
         "Welche Position hat die Partei zur Aufnahme von Geflüchteten?"
@@ -135,7 +158,8 @@ with st.sidebar:
             # Simulate clicking the question
             with st.spinner(f"Generiere Antwort für alle Parteien..."):
                 query = question
-                for (party, document_name) in parties.items():
+                for (party, document) in parties.items():
+                        document_name, parteiname = document.values()
                         st.session_state.messages[party].append({"role": "user", "content": query})
                         try:
                             if not st.session_state.vectorstore[party]:
