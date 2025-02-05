@@ -1,6 +1,4 @@
 import streamlit as st
-import json
-import datetime
 from rag_system import invoke_rag_chain, parties, create_vectorstore, setup_retrieval
 
 # Set Streamlit page configuration
@@ -27,7 +25,7 @@ if "api_key" not in st.session_state:
     st.session_state.api_key = api_key
 
 #st.subheader("st.session_state object:") 
-#st.session_state
+st.session_state
 
 # Dynamic columns for party answers
 columns = st.columns(len(parties))
@@ -158,12 +156,13 @@ with st.sidebar:
             st.rerun()
 
     # Document Overview
-    st.markdown("### Document Overview")
-    with st.expander("📚 Available Documents"):
-        for (party, path) in parties.items():
-            st.markdown(f"**{party}**:"
-                        f"\n- {path}"
-                        "\n- Latest Version: 2025")
+    st.markdown("### Quelle")
+    with st.expander("📚  Link zu den Wahlprogrammen"):
+        st.page_link("https://www.bundestagswahl-bw.de/bundestagswahl-wahlprogramme", label="Wahlprogramme Parteien - Bundestagswahl 2025")
+       # for (party, path) in parties.items():
+        #    st.markdown(f"**{party}**:"
+         #               f"\n- {path}"
+          #              "\n- Latest Version: 2025")
                 
     #if st.button("Export Data"):
         # Prepare the data for export
