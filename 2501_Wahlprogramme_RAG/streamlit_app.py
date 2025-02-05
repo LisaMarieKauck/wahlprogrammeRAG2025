@@ -20,6 +20,12 @@ if "retriever" not in st.session_state:
 st.title("Wahlprogramme Chat Assistant")
 st.write("Chat with German political party programs for 2025!")
 
+# Prompt the user to enter their API key
+api_key = st.text_input("Enter your API key:", type="password")
+
+if "api_key" not in st.session_state:
+    st.session_state.api_key = api_key
+
 #st.subheader("st.session_state object:") 
 #st.session_state
 
@@ -27,8 +33,28 @@ st.write("Chat with German political party programs for 2025!")
 columns = st.columns(len(parties))
 for col, (party, document_name) in zip(columns, parties.items()):
     with col:
-        st.subheader(party)
+        header = st.container()
+        header.subheader(party)
+        header.write("""<div class='fixed-header'/>""", unsafe_allow_html=True)
 
+        ### Custom CSS for the sticky header
+        st.markdown(
+            """
+        <style>
+            div[data-testid="stVerticalBlock"] div:has(div.fixed-header) {
+                position: sticky;
+                top: 2.875rem;
+                background-color: white;
+                z-index: 999;
+            }
+            .fixed-header {
+                border-bottom: 1px solid black;
+            }
+        </style>
+            """,
+            unsafe_allow_html=True
+        )
+        
 query = st.chat_input("Stellen Sie jetzt eine Frage!")
 
 for col, (party, document_name) in zip(columns, parties.items()):
@@ -77,7 +103,7 @@ for col, (party, document_name) in zip(columns, parties.items()):
 # Sidebar
 with st.sidebar:
     if st.button("Clear Chat History"):
-        st.session_state.messages = {party: "" for party in parties}
+        st.session_state.messages = {party: [] for party in parties}
         st.session_state.party_references = {party: [] for party in parties}
         st.rerun()
 
@@ -109,25 +135,26 @@ with st.sidebar:
     for question in example_questions:
         if st.button(question):
             # Simulate clicking the question
-            query = question
-            for (party, document_name) in parties.items():
-                st.session_state.messages[party].append({"role": "user", "content": query})
-                try:
-                    if not st.session_state.vectorstore[party]:
-                        vectorestore = create_vectorstore(document_name)
-                        st.session_state.vectorstore[party] = vectorestore
-                        st.session_state.retriever[party] = setup_retrieval(vectorestore)
+            with st.spinner(f"Generiere Antwort für alle Parteien..."):
+                query = question
+                for (party, document_name) in parties.items():
+                        st.session_state.messages[party].append({"role": "user", "content": query})
+                        try:
+                            if not st.session_state.vectorstore[party]:
+                                vectorestore = create_vectorstore(document_name)
+                                st.session_state.vectorstore[party] = vectorestore
+                                st.session_state.retriever[party] = setup_retrieval(vectorestore)
 
-                    retriever = st.session_state.retriever[party]
-                    output = invoke_rag_chain(retriever, query)
-                    answer = output["answer"]
-                    context = output["context"]
+                            retriever = st.session_state.retriever[party]
+                            output = invoke_rag_chain(retriever, query)
+                            answer = output["answer"]
+                            context = output["context"]
 
-                    st.session_state.messages[party].append({"role": "assistant", "content": answer})
-                    st.session_state.party_references[party] = context
-                except AttributeError as e:
-                    st.error(f"Fehler! {e}")
-                    st.session_state.messages[party].append({"role": "assistant", "content": "Sorry, hat nicht geklappt."})
+                            st.session_state.messages[party].append({"role": "assistant", "content": answer})
+                            st.session_state.party_references[party] = context
+                        except AttributeError as e:
+                            st.error(f"Fehler! {e}")
+                            st.session_state.messages[party].append({"role": "assistant", "content": "Sorry, hat nicht geklappt."})
             st.rerun()
 
     # Document Overview
