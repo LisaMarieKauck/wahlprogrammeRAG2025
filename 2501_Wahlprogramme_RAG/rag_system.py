@@ -50,7 +50,7 @@ parties = {
 # Initialize OpenAI embeddings
 #embedding_function = OpenAIEmbeddings(model="text-embedding-3-large")
 # Text-Splitter konfigurieren
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 # LLM
 #llm = ChatOpenAI(temperature=0.7)
 #embeddings_batch_response = mistral_client.embeddings.create(
