@@ -1,5 +1,5 @@
 import streamlit as st
-import openai
+import openai, os
 #from groq import Groq
 from rag_system import invoke_rag_chain, parties, create_vectorstore, setup_retrieval
 
@@ -28,6 +28,7 @@ api_key = apikey.text_input("Kopiere hier deinen Groq API Key rein:", type="pass
 submit = apikey.form_submit_button('Enter')
 if submit:
     st.session_state.api_key = api_key
+    os.environ["OPENAI_API_KEY"] = api_key  # Set API key dynamically
     apikey.success("API Key erfolgreich eingfügt.")
 else:
     if not st.session_state.api_key:
