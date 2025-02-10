@@ -14,22 +14,30 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from groq import Groq
 
-
+parties = {
+    "BSW": {'path': "https://bsw-vg.de/wp-content/themes/bsw/assets/downloads/BSW%20Wahlprogramm%202025.pdf", 'name': "BSW"},
+    "SPD": {'path': "https://www.spd.de/fileadmin/Dokumente/Beschluesse/Programm/SPD_Programm_bf.pdf", 'name': "SPD"},
+    "DieLINKE": {'path': "https://www.die-linke.de/fileadmin/user_upload/Wahlprogramm_Langfassung_Linke-BTW25_01.pdf", 'name': "Die LINKE"},
+    "FDP": {'path': "https://www.fdp.de/sites/default/files/2024-12/fdp-wahlprogramm_2025.pdf", 'name': "FDP"},
+    "Gruene": {'path': "https://cms.gruene.de/uploads/assets/20250205_Regierungsprogramm_DIGITAL_DINA5.pdf", 'name': "Bündnis90/Die Grünen"},
+    "Union": {'path': "https://www.politikwechsel.cdu.de/sites/www.politikwechsel.cdu.de/files/downloads/km_btw_2025_wahlprogramm_langfassung_ansicht.pdf", 'name': "Union"},
+    "AfD": {'path': "https://www.afd.de/wp-content/uploads/2025/02/AfD_Bundestagswahlprogramm2025_web.pdf", 'name': "AfD"}
+}
 
 # Party documents
-parties = {
-    "BSW": {'path': "pdf/BSW_Wahlprogramm_2025__Entwurf_.pdf", 'name': "BSW"},
-    "SPD": {'path': "pdf/BTW_2025_SPD_Regierungsprogramm.pdf", 'name': "SPD"},
-    "DieLINKE": {'path': "pdf/btw_2025_wahlprogramm_die_linke.pdf", 'name': "Die LINKE"},
-    "FDP": {'path': "pdf/BTW_2025_Wahlprogramm_FDP_Entwurf.pdf", 'name': "FDP"},
-    "Gruene": {'path': "pdf/BTW_2025_Wahlprogramm_Grüne_Entwurf.pdf", 'name': "Bündnis90/Die Grünen"},
-    "Union": {'path': "pdf/btw_2025_wahlprogramm-cdu-csu.pdf", 'name': "Union"},
-    "AfD": {'path': "pdf/Ich_kotze_gleich_Leitantrag-Bundestagswahlprogramm-2025.pdf", 'name': "AfD"}
-}
+#parties_old = {
+ #   "BSW": {'path': "pdf/BSW_Wahlprogramm_2025__Entwurf_.pdf", 'name': "BSW"},
+  #  "SPD": {'path': "pdf/BTW_2025_SPD_Regierungsprogramm.pdf", 'name': "SPD"},
+   # "DieLINKE": {'path': "pdf/btw_2025_wahlprogramm_die_linke.pdf", 'name': "Die LINKE"},
+    #"FDP": {'path': "pdf/BTW_2025_Wahlprogramm_FDP_Entwurf.pdf", 'name': "FDP"},
+    #"Gruene": {'path': "pdf/BTW_2025_Wahlprogramm_Grüne_Entwurf.pdf", 'name': "Bündnis90/Die Grünen"},
+    #"Union": {'path': "pdf/btw_2025_wahlprogramm-cdu-csu.pdf", 'name': "Union"},
+    #"AfD": {'path': "pdf/Ich_kotze_gleich_Leitantrag-Bundestagswahlprogramm-2025.pdf", 'name': "AfD"}
+#}
 
 # Load environment variables
 load_dotenv()
-#OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 #client = OpenAI(
 #  api_key=os.environ['OPENAI_API_KEY'],  # this is also the default, it can be omitted
 #)
