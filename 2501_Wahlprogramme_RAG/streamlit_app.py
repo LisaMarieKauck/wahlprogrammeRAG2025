@@ -34,11 +34,11 @@ else:
     if not st.session_state.api_key:
         apikey.warning("Es fehlt noch ein API Key.", icon="⚠️")
 
-
+OPENAI_API_KEY = st.session_state.api_key 
 #groq
 client = openai.OpenAI(
     base_url="https://api.groq.com/openai/v1",
-    api_key=st.session_state.api_key
+    api_key=OPENAI_API_KEY
 )
 
 #st.subheader("st.session_state object:") 
@@ -183,10 +183,11 @@ with st.sidebar:
     st.markdown("### Quelle")
     with st.expander("📚  Link zu den Wahlprogrammen"):
         st.page_link("https://www.bundestagswahl-bw.de/bundestagswahl-wahlprogramme", label="Wahlprogramme Parteien - Bundestagswahl 2025")
-       # for (party, path) in parties.items():
-        #    st.markdown(f"**{party}**:"
-         #               f"\n- {path}"
-          #              "\n- Latest Version: 2025")
+        for (party, document) in parties.items():
+            path, document_name = document.values()
+            st.markdown(f"**{document_name}**:"
+                        f"\n- {path}"
+                        "\n- Latest Version: 2025")
                 
     #if st.button("Export Data"):
         # Prepare the data for export
