@@ -1,6 +1,5 @@
 import os
 from dotenv import load_dotenv
-import openai  # Using OpenAI's client library with Groq
 from langchain.chains import RetrievalQA
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.vectorstores import FAISS
@@ -50,19 +49,33 @@ parties = {
 
 # Initialize OpenAI embeddings
 #embedding_function = OpenAIEmbeddings(model="text-embedding-3-large")
-embedding_function = OpenAIEmbeddings()
 # Text-Splitter konfigurieren
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
 # LLM
 #llm = ChatOpenAI(temperature=0.7)
+#embeddings_batch_response = mistral_client.embeddings.create(
+#    model=model,
+#    inputs=["Embed this sentence.", "As well as this one."],
+#)
+
+def generate_mistral_embeddings(texts):
+    response = mistral_client.embeddings.create(
+        model="mistral-embed",
+        inputs=texts
+    )
+    embeddings = [item.embedding for item in response.data]
+    return embeddings
 
 
 def create_vectorstore(path):
     loader = PyPDFLoader(path)
     documents = loader.load_and_split(text_splitter)
-    print("Trying to call Embeddings.")
-    embeddings = embedding_function
+    texts = [doc.page_content for doc in documents]
+    print("About to call embeddings")
+    embeddings = generate_mistral_embeddings(texts)
+    print("Trying to create vectorstore.")
     vectorstore = FAISS.from_documents(documents, embeddings)
+    print("done")
     return vectorstore
 
 def setup_retrieval(vectorstore):

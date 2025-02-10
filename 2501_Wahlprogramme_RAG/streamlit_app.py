@@ -1,5 +1,5 @@
 import streamlit as st
-import openai, os
+import os
 from langchain_groq import ChatGroq
 #from groq import Groq
 from rag_system import invoke_rag_chain, parties, create_vectorstore, setup_retrieval, embeddings_batch_response
@@ -29,7 +29,7 @@ api_key = apikey.text_input("Kopiere hier deinen Groq API Key rein:", type="pass
 submit = apikey.form_submit_button('Enter')
 if submit:
     st.session_state.api_key = api_key
-    os.environ["OPENAI_API_KEY"] = api_key  # Set API key dynamically
+    os.environ["GROQ_API_KEY"] = api_key  # Set API key dynamically
     apikey.success("API Key erfolgreich eingfügt.")
 else:
     if not st.session_state.api_key:
@@ -38,18 +38,16 @@ else:
 apikey.write("Here is the key:")
 apikey.write(st.session_state.api_key)
 
-apikey.write(embeddings_batch_response)
-
 # Show a warning if no API Key is set
-if not st.session_state.api_key:
-    apikey.warning("Bitte gib deinen Groq API Key ein, um fortzufahren!", icon="⚠️")
+#if not st.session_state.api_key:
+#    apikey.warning("Bitte gib deinen Groq API Key ein, um fortzufahren!", icon="⚠️")
 
 # Use Groq API key for OpenAI client
-if st.session_state.api_key:
-    client = openai.OpenAI(
-        base_url="https://api.groq.com/openai/v1",
-        api_key=st.session_state.api_key  # User-provided key
-    )
+#if st.session_state.api_key:
+#    client = openai.OpenAI(
+#        base_url="https://api.groq.com/openai/v1",
+#        api_key=st.session_state.api_key  # User-provided key
+#    )
 
 #st.subheader("st.session_state object:") 
 #st.session_state
