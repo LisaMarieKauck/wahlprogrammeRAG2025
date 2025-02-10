@@ -47,6 +47,7 @@ llm = ChatOpenAI(temperature=0.7)
 def create_vectorstore(path):
     loader = PyPDFLoader(path)
     documents = loader.load_and_split(text_splitter)
+    print("Trying to call Embeddings.")
     embeddings = embedding_function
     vectorstore = FAISS.from_documents(documents, embeddings)
     return vectorstore
