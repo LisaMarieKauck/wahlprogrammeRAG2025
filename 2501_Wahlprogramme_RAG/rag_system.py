@@ -39,7 +39,8 @@ parties = {
 #GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 
 # Initialize OpenAI embeddings
-embedding_function = OpenAIEmbeddings(model="text-embedding-3-large")
+#embedding_function = OpenAIEmbeddings(model="text-embedding-3-large")
+embedding_function = OpenAIEmbeddings()
 # Text-Splitter konfigurieren
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
 # LLM
