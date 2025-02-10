@@ -58,14 +58,37 @@ text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
 #    inputs=["Embed this sentence.", "As well as this one."],
 #)
 
-def generate_mistral_embeddings(texts):
-    response = mistral_client.embeddings.create(
-        model="mistral-embed",
-        inputs=texts
-    )
-    embeddings = [item.embedding for item in response.data]
-    print(response.usage.total_tokens)
+def generate_mistral_embeddings(texts, max_tokens_per_batch=16384):
+    embeddings = []
+    current_batch = []
+    current_tokens = 0
+
+    for text in texts:
+        text_tokens = len(text.split())  # Estimate token count; adjust if you have a more accurate method
+        if current_tokens + text_tokens > max_tokens_per_batch:
+            # Process the current batch
+            response = mistral_client.embeddings.create(
+                model="mistral-embed",
+                inputs=current_batch
+            )
+            embeddings.extend([item.embedding for item in response.data])
+            # Start a new batch
+            current_batch = [text]
+            current_tokens = text_tokens
+        else:
+            current_batch.append(text)
+            current_tokens += text_tokens
+
+    # Process any remaining texts in the last batch
+    if current_batch:
+        response = mistral_client.embeddings.create(
+            model="mistral-embed",
+            inputs=current_batch
+        )
+        embeddings.extend([item.embedding for item in response.data])
+
     return embeddings
+
 
 
 def create_vectorstore(path):
