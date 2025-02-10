@@ -2,7 +2,7 @@ import streamlit as st
 import openai, os
 from langchain_groq import ChatGroq
 #from groq import Groq
-from rag_system import invoke_rag_chain, parties, create_vectorstore, setup_retrieval
+from rag_system import invoke_rag_chain, parties, create_vectorstore, setup_retrieval, embeddings_batch_response
 
 # Set Streamlit page configuration
 st.set_page_config(layout="wide")
@@ -37,6 +37,8 @@ else:
 
 apikey.write("Here is the key:")
 apikey.write(st.session_state.api_key)
+
+apikey.write(embeddings_batch_response)
 
 # Show a warning if no API Key is set
 if not st.session_state.api_key:

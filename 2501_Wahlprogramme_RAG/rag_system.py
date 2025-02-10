@@ -12,6 +12,16 @@ from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_groq import ChatGroq
+from mistralai import Mistral
+
+mistral_api_key = os.environ["MISTRAL_API_KEY"]
+model = "mistral-embed"
+mistral_client = Mistral(api_key=mistral_api_key)
+
+embeddings_batch_response = mistral_client.embeddings.create(
+    model=model,
+    inputs=["Embed this sentence.", "As well as this one."],
+)
 
 parties = {
     #"BSW": {'path': "https://bsw-vg.de/wp-content/themes/bsw/assets/downloads/BSW%20Wahlprogramm%202025.pdf", 'name': "BSW"},
