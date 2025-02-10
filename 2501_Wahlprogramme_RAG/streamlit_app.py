@@ -1,5 +1,5 @@
 import streamlit as st
-import openai
+import openai, os
 from groq import Groq
 from rag_system import invoke_rag_chain, parties, create_vectorstore, setup_retrieval
 
