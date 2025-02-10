@@ -17,10 +17,10 @@ mistral_api_key = os.environ["MISTRAL_API_KEY"]
 model = "mistral-embed"
 mistral_client = Mistral(api_key=mistral_api_key)
 
-embeddings_batch_response = mistral_client.embeddings.create(
-    model=model,
-    inputs=["Embed this sentence.", "As well as this one."],
-)
+#embeddings_batch_response = mistral_client.embeddings.create(
+#    model=model,
+#    inputs=["Embed this sentence.", "As well as this one."],
+#)
 
 parties = {
     #"BSW": {'path': "https://bsw-vg.de/wp-content/themes/bsw/assets/downloads/BSW%20Wahlprogramm%202025.pdf", 'name': "BSW"},
@@ -64,6 +64,7 @@ def generate_mistral_embeddings(texts):
         inputs=texts
     )
     embeddings = [item.embedding for item in response.data]
+    print(response.usage.total_tokens)
     return embeddings
 
 
