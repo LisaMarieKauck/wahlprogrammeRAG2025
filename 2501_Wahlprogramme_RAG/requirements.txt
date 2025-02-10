@@ -8,3 +8,4 @@ tiktoken
 pypdf
 langchain-openai
 groq
+langchain_groq

@@ -1,5 +1,6 @@
 import streamlit as st
 import openai, os
+from langchain_groq import ChatGroq
 #from groq import Groq
 from rag_system import invoke_rag_chain, parties, create_vectorstore, setup_retrieval
 
@@ -34,6 +35,9 @@ else:
     if not st.session_state.api_key:
         apikey.warning("Es fehlt noch ein API Key.", icon="⚠️")
 
+apikey.write("Here is the key:")
+apikey.write(st.session_state.api_key)
+
 # Show a warning if no API Key is set
 if not st.session_state.api_key:
     apikey.warning("Bitte gib deinen Groq API Key ein, um fortzufahren!", icon="⚠️")
@@ -47,6 +51,8 @@ if st.session_state.api_key:
 
 #st.subheader("st.session_state object:") 
 #st.session_state
+
+LLM = ChatGroq(groq_api_key=st.session_state.api_key, model_name="Llama3-8b-8192")
 
 # Dynamic columns for party answers
 columns = st.columns(len(parties))
@@ -99,7 +105,7 @@ for col, (party, document) in zip(columns, parties.items()):
                  with st.chat_message("assistant"):
                     with st.spinner(f"Generiere Antwort für {parteiname}..."):
                         retriever = st.session_state.retriever[party]
-                        output = invoke_rag_chain(retriever, query)
+                        output = invoke_rag_chain(LLM, retriever, query)
                         #answer = output
                         answer = output["answer"]
                         context = output["context"]
@@ -172,7 +178,7 @@ with st.sidebar:
                                 st.session_state.retriever[party] = setup_retrieval(vectorestore)
 
                             retriever = st.session_state.retriever[party]
-                            output = invoke_rag_chain(retriever, query)
+                            output = invoke_rag_chain(LLM, retriever, query)
                             answer = output["answer"]
                             context = output["context"]
 

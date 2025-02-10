@@ -11,6 +11,7 @@ from operator import itemgetter
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_groq import ChatGroq
 
 parties = {
     #"BSW": {'path': "https://bsw-vg.de/wp-content/themes/bsw/assets/downloads/BSW%20Wahlprogramm%202025.pdf", 'name': "BSW"},
@@ -42,7 +43,8 @@ embedding_function = OpenAIEmbeddings(model="text-embedding-3-large")
 # Text-Splitter konfigurieren
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
 # LLM
-llm = ChatOpenAI(temperature=0.7)
+#llm = ChatOpenAI(temperature=0.7)
+
 
 def create_vectorstore(path):
     loader = PyPDFLoader(path)
@@ -69,7 +71,7 @@ prompt=ChatPromptTemplate.from_template(test_prompt)
 #print(prompt.invoke)
 
 
-def invoke_rag_chain(retriever, question):
+def invoke_rag_chain(llm, retriever, question):
     combine_docs_chain = create_stuff_documents_chain(llm, prompt)
     rag_chain = create_retrieval_chain(retriever, combine_docs_chain)
     answer = rag_chain.invoke({"input": question})
