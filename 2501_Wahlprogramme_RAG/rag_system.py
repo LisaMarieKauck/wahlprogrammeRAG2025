@@ -1,18 +1,16 @@
 import os
 from dotenv import load_dotenv
+import openai  # Using OpenAI's client library with Groq
 from langchain.chains import RetrievalQA
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.vectorstores import FAISS
-from langchain_openai import OpenAIEmbeddings
-from langchain_openai import ChatOpenAI
-import openai
+from langchain_openai import OpenAIEmbeddings, ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from operator import itemgetter
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from groq import Groq
 
 parties = {
     #"BSW": {'path': "https://bsw-vg.de/wp-content/themes/bsw/assets/downloads/BSW%20Wahlprogramm%202025.pdf", 'name': "BSW"},
@@ -37,12 +35,7 @@ parties = {
 
 # Load environment variables
 load_dotenv()
-OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
-#client = OpenAI(
-#  api_key=os.environ['OPENAI_API_KEY'],  # this is also the default, it can be omitted
-#)
-#openai.api_key = OPENAI_API_KEY
-
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
 
 # Initialize OpenAI embeddings
 embedding_function = OpenAIEmbeddings(model="text-embedding-3-large")

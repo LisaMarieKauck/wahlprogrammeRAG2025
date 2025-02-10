@@ -1,6 +1,6 @@
 import streamlit as st
 import openai
-from groq import Groq
+#from groq import Groq
 from rag_system import invoke_rag_chain, parties, create_vectorstore, setup_retrieval
 
 # Set Streamlit page configuration
@@ -34,12 +34,14 @@ else:
     if not st.session_state.api_key:
         apikey.warning("Es fehlt noch ein API Key.", icon="⚠️")
 
-OPENAI_API_KEY = st.session_state.api_key 
-#groq
-client = openai.OpenAI(
-    base_url="https://api.groq.com/openai/v1",
-    api_key=OPENAI_API_KEY
-)
+# Use Groq API key for OpenAI client
+if st.session_state.api_key:
+    client = openai.OpenAI(
+        base_url="https://api.groq.com/openai/v1",
+        api_key=st.session_state.api_key
+    )
+else:
+    st.warning("Bitte API Key eingeben!", icon="⚠️")
 
 #st.subheader("st.session_state object:") 
 #st.session_state
