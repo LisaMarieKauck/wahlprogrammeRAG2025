@@ -16,8 +16,7 @@ if "vectorstore" not in st.session_state:
 if "retriever" not in st.session_state:
     st.session_state.retriever = {party: [] for party in parties}
 if "api_key" not in st.session_state:
-    st.write("API Key is missing")
-    st.session_state.api_key=""
+    st.session_state.api_key=None
 
 # Main interface
 st.title("Wahlprogramme Chat Assistant")
@@ -34,14 +33,16 @@ else:
     if not st.session_state.api_key:
         apikey.warning("Es fehlt noch ein API Key.", icon="⚠️")
 
+# Show a warning if no API Key is set
+if not st.session_state.api_key:
+    apikey.warning("Bitte gib deinen Groq API Key ein, um fortzufahren!", icon="⚠️")
+
 # Use Groq API key for OpenAI client
 if st.session_state.api_key:
     client = openai.OpenAI(
         base_url="https://api.groq.com/openai/v1",
-        api_key=st.session_state.api_key
+        api_key=st.session_state.api_key  # User-provided key
     )
-else:
-    st.warning("Bitte API Key eingeben!", icon="⚠️")
 
 #st.subheader("st.session_state object:") 
 #st.session_state
