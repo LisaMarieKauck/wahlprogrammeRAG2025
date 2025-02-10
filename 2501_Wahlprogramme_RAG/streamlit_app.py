@@ -2,7 +2,7 @@ import streamlit as st
 import os
 from langchain_groq import ChatGroq
 #from groq import Groq
-from rag_system import invoke_rag_chain, parties, create_vectorstore, setup_retrieval, embeddings_batch_response
+from rag_system import invoke_rag_chain, parties, create_vectorstore, setup_retrieval
 
 # Set Streamlit page configuration
 st.set_page_config(layout="wide")
