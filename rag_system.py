@@ -79,5 +79,6 @@ def invoke_rag_chain(llm, retriever, question):
     answer = rag_chain.invoke({"input": question})
     return answer
 
-for party, document_path in parties.items():
-    create_vectorstore(document_path, party)
+for party, document in parties.items():
+    document_name, parteiname = document.values()
+    create_vectorstore(document_name, party)
