@@ -19,7 +19,7 @@ from mistralai import Mistral
 #)
 
 parties = {
-    "BSW": {'path': "https://bsw-vg.de/wp-content/themes/bsw/assets/downloads/BSW%20Wahlprogramm%202025.pdf", 'name': "BSW"},
+   # "BSW": {'path': "https://bsw-vg.de/wp-content/themes/bsw/assets/downloads/BSW%20Wahlprogramm%202025.pdf", 'name': "BSW"},
     "SPD": {'path': "https://www.spd.de/fileadmin/Dokumente/Beschluesse/Programm/SPD_Programm_bf.pdf", 'name': "SPD"},
     "DieLINKE": {'path': "https://www.die-linke.de/fileadmin/user_upload/Wahlprogramm_Langfassung_Linke-BTW25_01.pdf", 'name': "Die LINKE"},
     "FDP": {'path': "https://www.fdp.de/sites/default/files/2024-12/fdp-wahlprogramm_2025.pdf", 'name': "FDP"},
