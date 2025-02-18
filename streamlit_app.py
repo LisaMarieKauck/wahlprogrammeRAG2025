@@ -1,5 +1,6 @@
 import streamlit as st
 import os
+from dotenv import load_dotenv
 #from groq import Groq
 from langchain.vectorstores import FAISS
 from rag_system import invoke_rag_chain, parties, create_vectorstore, setup_retrieval, embedding_function, parties_old
@@ -16,8 +17,19 @@ if "vectorstore" not in st.session_state:
     st.session_state.vectorstore = {party: [] for party in parties}
 if "retriever" not in st.session_state:
     st.session_state.retriever = {party: [] for party in parties}
-if "api_key" not in st.session_state:
-    st.session_state.api_key=None
+
+# Load Streamlit secrets if available
+if "OPENAI_API_KEY" in st.secrets:
+    os.environ["OPENAI_API_KEY"] = st.secrets["OPENAI_API_KEY"]
+
+# Load environment variables from .env file as a fallback
+load_dotenv()
+
+# Initialize OpenAI embeddings
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+if not OPENAI_API_KEY:
+    raise ValueError("OPENAI_API_KEY is missing. Please check your secrets.toml or .env file.")
+
 
 # Main interface
 st.title("Wahlprogramme Chat Assistant")
