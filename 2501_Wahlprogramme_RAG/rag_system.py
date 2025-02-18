@@ -46,7 +46,7 @@ OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 #openai.api_key = OPENAI_API_KEY
 
 # Initialize OpenAI embeddings
-embedding_function = OpenAIEmbeddings(model="text-embedding-3-small")
+embedding_function = OpenAIEmbeddings(model="text-embedding-3-small", api_key=OPENAI_API_KEY)
 # Text-Splitter konfigurieren
 text_splitter = RecursiveCharacterTextSplitter(chunk_size=5000, chunk_overlap=100)
 # LLM
