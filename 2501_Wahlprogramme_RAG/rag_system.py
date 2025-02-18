@@ -13,17 +13,13 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_groq import ChatGroq
 from mistralai import Mistral
 
-mistral_api_key = os.environ["MISTRAL_API_KEY"]
-model = "mistral-embed"
-mistral_client = Mistral(api_key=mistral_api_key)
-
 #embeddings_batch_response = mistral_client.embeddings.create(
 #    model=model,
 #    inputs=["Embed this sentence.", "As well as this one."],
 #)
 
 parties = {
-    #"BSW": {'path': "https://bsw-vg.de/wp-content/themes/bsw/assets/downloads/BSW%20Wahlprogramm%202025.pdf", 'name': "BSW"},
+    "BSW": {'path': "https://bsw-vg.de/wp-content/themes/bsw/assets/downloads/BSW%20Wahlprogramm%202025.pdf", 'name': "BSW"},
     "SPD": {'path': "https://www.spd.de/fileadmin/Dokumente/Beschluesse/Programm/SPD_Programm_bf.pdf", 'name': "SPD"},
     "DieLINKE": {'path': "https://www.die-linke.de/fileadmin/user_upload/Wahlprogramm_Langfassung_Linke-BTW25_01.pdf", 'name': "Die LINKE"},
     "FDP": {'path': "https://www.fdp.de/sites/default/files/2024-12/fdp-wahlprogramm_2025.pdf", 'name': "FDP"},
@@ -44,63 +40,25 @@ parties = {
 #}
 
 # Load environment variables
-#load_dotenv()
-#GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+load_dotenv()
+GROQ_API_KEY = os.getenv('GROQ_API_KEY')
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+#openai.api_key = OPENAI_API_KEY
 
 # Initialize OpenAI embeddings
-#embedding_function = OpenAIEmbeddings(model="text-embedding-3-large")
+embedding_function = OpenAIEmbeddings(model="text-embedding-3-small")
 # Text-Splitter konfigurieren
-text_splitter = RecursiveCharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+text_splitter = RecursiveCharacterTextSplitter(chunk_size=5000, chunk_overlap=100)
 # LLM
-#llm = ChatOpenAI(temperature=0.7)
-#embeddings_batch_response = mistral_client.embeddings.create(
-#    model=model,
-#    inputs=["Embed this sentence.", "As well as this one."],
-#)
+llm = ChatOpenAI(temperature=0.5, model="gpt-4o-mini")
 
-def generate_mistral_embeddings(texts, max_tokens_per_batch=16384):
-    embeddings = []
-    current_batch = []
-    current_tokens = 0
-
-    for text in texts:
-        text_tokens = len(text.split())  # Estimate token count; adjust if you have a more accurate method
-        if current_tokens + text_tokens > max_tokens_per_batch:
-            # Process the current batch
-            response = mistral_client.embeddings.create(
-                model="mistral-embed",
-                inputs=current_batch
-            )
-            embeddings.extend([item.embedding for item in response.data])
-            # Start a new batch
-            current_batch = [text]
-            current_tokens = text_tokens
-        else:
-            current_batch.append(text)
-            current_tokens += text_tokens
-
-    # Process any remaining texts in the last batch
-    if current_batch:
-        response = mistral_client.embeddings.create(
-            model="mistral-embed",
-            inputs=current_batch
-        )
-        embeddings.extend([item.embedding for item in response.data])
-
-    return embeddings
-
-
-
-def create_vectorstore(path):
+def create_vectorstore(path, party):
     loader = PyPDFLoader(path)
     documents = loader.load_and_split(text_splitter)
-    texts = [doc.page_content for doc in documents]
-    print("About to call embeddings")
-    embeddings = generate_mistral_embeddings(texts)
-    print("Trying to create vectorstore.")
+    embeddings = embedding_function
     vectorstore = FAISS.from_documents(documents, embeddings)
-    print("done")
-    return vectorstore
+    vectorstore.save_local(f"{party}_faiss_index")
+    #return vectorstore
 
 def setup_retrieval(vectorstore):
     retriever = vectorstore.as_retriever(search_kwargs={"k":3})
@@ -125,4 +83,5 @@ def invoke_rag_chain(llm, retriever, question):
     answer = rag_chain.invoke({"input": question})
     return answer
 
-
+for party, document_path in parties.items():
+    create_vectorstore(document_path, party)

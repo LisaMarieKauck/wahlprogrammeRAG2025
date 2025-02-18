@@ -1,8 +1,8 @@
 import streamlit as st
 import os
-from langchain_groq import ChatGroq
 #from groq import Groq
-from rag_system import invoke_rag_chain, parties, create_vectorstore, setup_retrieval
+from langchain.vectorstores import FAISS
+from rag_system import invoke_rag_chain, parties, create_vectorstore, setup_retrieval, embedding_function
 
 # Set Streamlit page configuration
 st.set_page_config(layout="wide")
@@ -24,19 +24,19 @@ st.title("Wahlprogramme Chat Assistant")
 st.write("Chat mit den Wahlprogrammen für die Bundestagswahl 2025!")
 
 # Prompt the user to enter their API key
-apikey = st.form("user_api_key")
-api_key = apikey.text_input("Kopiere hier deinen Groq API Key rein:", type="password")
-submit = apikey.form_submit_button('Enter')
-if submit:
-    st.session_state.api_key = api_key
-    os.environ["GROQ_API_KEY"] = api_key  # Set API key dynamically
-    apikey.success("API Key erfolgreich eingfügt.")
-else:
-    if not st.session_state.api_key:
-        apikey.warning("Es fehlt noch ein API Key.", icon="⚠️")
+#apikey = st.form("user_api_key")
+#api_key = apikey.text_input("Kopiere hier deinen Groq API Key rein:", type="password")
+#submit = apikey.form_submit_button('Enter')
+#if submit:
+ #   st.session_state.api_key = api_key
+  #  os.environ["GROQ_API_KEY"] = api_key  # Set API key dynamically
+   # apikey.success("API Key erfolgreich eingfügt.")
+#else:
+ #   if not st.session_state.api_key:
+  #      apikey.warning("Es fehlt noch ein API Key.", icon="⚠️")
 
-apikey.write("Here is the key:")
-apikey.write(st.session_state.api_key)
+#apikey.write("Here is the key:")
+#apikey.write(st.session_state.api_key)
 
 # Show a warning if no API Key is set
 #if not st.session_state.api_key:
@@ -52,7 +52,7 @@ apikey.write(st.session_state.api_key)
 #st.subheader("st.session_state object:") 
 #st.session_state
 
-LLM = ChatGroq(groq_api_key=st.session_state.api_key, model_name="Llama3-8b-8192")
+#LLM = ChatGroq(groq_api_key=st.session_state.api_key, model_name="Llama3-8b-8192")
 
 # Dynamic columns for party answers
 columns = st.columns(len(parties))
@@ -98,7 +98,8 @@ for col, (party, document) in zip(columns, parties.items()):
                 st.markdown(query)
             st.session_state.messages[party].append({"role": "user", "content": query})
             if not st.session_state.vectorstore[party]:
-                vectorestore = create_vectorstore(document_name)
+                vectorestore = FAISS.load_local(f"{party}_faiss_index", embedding_function, allow_dangerous_deserialization=True)
+                #vectorestore = create_vectorstore(document_name)
                 st.session_state.vectorstore[party] = vectorestore
                 st.session_state.retriever[party] = setup_retrieval(vectorestore)
             try:
@@ -137,15 +138,6 @@ with st.sidebar:
     st.write("Stellen Sie Fragen zu den Wahlprogrammen deutscher Parteien für die Bundestagswahl 2025.")
 
     st.markdown("""
-    ### Anleitung
-    1. Account of https://console.groq.com/ anlegen
-    2. Zum Reiter API Keys wechseln 
-    3. Auf die Schaltfläche mit der Aufschrift „Create API-Key“ klicken.
-    4. Benennen des API-Schlüssels
-    5. API-Key kopieren (er wird danach nicht noch einmal angezeigt)
-    3. In diese App einfügen und Enter drücken
-    4. Loslegen!            
-
     ### Tipps
     - Spezifische Fragen stellen
     - Im Anschluss Follow-up Fragen 
@@ -173,7 +165,8 @@ with st.sidebar:
                         st.session_state.messages[party].append({"role": "user", "content": query})
                         try:
                             if not st.session_state.vectorstore[party]:
-                                vectorestore = create_vectorstore(document_name)
+                                vectorestore = FAISS.load_local(f"{party}_faiss_index", embedding_function, allow_dangerous_deserialization=True)
+                                #vectorestore = create_vectorstore(document_name)
                                 st.session_state.vectorstore[party] = vectorestore
                                 st.session_state.retriever[party] = setup_retrieval(vectorestore)
 
