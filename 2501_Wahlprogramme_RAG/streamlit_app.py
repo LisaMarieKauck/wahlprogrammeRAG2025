@@ -2,7 +2,7 @@ import streamlit as st
 import os
 #from groq import Groq
 from langchain.vectorstores import FAISS
-from rag_system import invoke_rag_chain, parties, create_vectorstore, setup_retrieval, embedding_function
+from rag_system import invoke_rag_chain, parties, create_vectorstore, setup_retrieval, embedding_function, parties_old
 
 # Set Streamlit page configuration
 st.set_page_config(layout="wide")
@@ -186,7 +186,7 @@ with st.sidebar:
     st.markdown("### Quelle")
     with st.expander("📚  Link zu den Wahlprogrammen"):
         st.page_link("https://www.bundestagswahl-bw.de/bundestagswahl-wahlprogramme", label="Wahlprogramme Parteien - Bundestagswahl 2025")
-        for (party, document) in parties.items():
+        for (party, document) in parties_old.items():
             path, document_name = document.values()
             st.markdown(f"**{document_name}**:"
                         f"\n- {path}"
