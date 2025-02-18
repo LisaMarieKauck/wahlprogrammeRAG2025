@@ -73,7 +73,7 @@ prompt=ChatPromptTemplate.from_template(test_prompt)
 #print(prompt.invoke)
 
 
-def invoke_rag_chain(llm, retriever, question):
+def invoke_rag_chain(retriever, question):
     combine_docs_chain = create_stuff_documents_chain(llm, prompt)
     rag_chain = create_retrieval_chain(retriever, combine_docs_chain)
     answer = rag_chain.invoke({"input": question})

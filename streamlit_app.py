@@ -118,7 +118,7 @@ for col, (party, document) in zip(columns, parties.items()):
                  with st.chat_message("assistant"):
                     with st.spinner(f"Generiere Antwort für {parteiname}..."):
                         retriever = st.session_state.retriever[party]
-                        output = invoke_rag_chain(LLM, retriever, query)
+                        output = invoke_rag_chain(retriever, query)
                         #answer = output
                         answer = output["answer"]
                         context = output["context"]
@@ -183,7 +183,7 @@ with st.sidebar:
                                 st.session_state.retriever[party] = setup_retrieval(vectorestore)
 
                             retriever = st.session_state.retriever[party]
-                            output = invoke_rag_chain(LLM, retriever, query)
+                            output = invoke_rag_chain(retriever, query)
                             answer = output["answer"]
                             context = output["context"]
 
