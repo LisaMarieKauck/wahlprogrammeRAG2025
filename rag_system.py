@@ -13,13 +13,13 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 import streamlit as st
 
 parties = {
-    #"BSW": {'path': "pdf/BSW_Wahlprogramm_2025__Entwurf_.pdf", 'name': "BSW"},
-    #"SPD": {'path': "pdf/BTW_2025_SPD_Regierungsprogramm.pdf", 'name': "SPD"},
-    #"DieLINKE": {'path': "pdf/btw_2025_wahlprogramm_die_linke.pdf", 'name': "Die LINKE"},
-    #"FDP": {'path': "pdf/BTW_2025_Wahlprogramm_FDP_Entwurf.pdf", 'name': "FDP"},
-    #"Gruene": {'path': "pdf/BTW_2025_Wahlprogramm_Grüne_Entwurf.pdf", 'name': "Bündnis90/Die Grünen"},
+    "BSW": {'path': "pdf/BSW_Wahlprogramm_2025__Entwurf_.pdf", 'name': "BSW"},
+    "SPD": {'path': "pdf/BTW_2025_SPD_Regierungsprogramm.pdf", 'name': "SPD"},
+    "DieLINKE": {'path': "pdf/btw_2025_wahlprogramm_die_linke.pdf", 'name': "Die LINKE"},
+    "FDP": {'path': "pdf/BTW_2025_Wahlprogramm_FDP_Entwurf.pdf", 'name': "FDP"},
+    "Gruene": {'path': "pdf/BTW_2025_Wahlprogramm_Grüne_Entwurf.pdf", 'name': "Bündnis90/Die Grünen"},
     "Union": {'path': "pdf/btw_2025_wahlprogramm-cdu-csu.pdf", 'name': "Union"},
-    #"AfD": {'path': "pdf/Ich_kotze_gleich_Leitantrag-Bundestagswahlprogramm-2025.pdf", 'name': "AfD"}
+    "AfD": {'path': "pdf/Ich_kotze_gleich_Leitantrag-Bundestagswahlprogramm-2025.pdf", 'name': "AfD"}
 }
 
 # Party documents
