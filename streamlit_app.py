@@ -1,9 +1,8 @@
 import streamlit as st
 import os
 from dotenv import load_dotenv
-#from groq import Groq
 from langchain.vectorstores import FAISS
-from rag_system import invoke_rag_chain, parties, create_vectorstore, setup_retrieval, embedding_function, parties_old
+from rag_system import invoke_rag_chain, parties, setup_retrieval, embedding_function, parties_old
 
 # Set Streamlit page configuration
 st.set_page_config(layout="wide")
@@ -82,7 +81,6 @@ for col, (party, document) in zip(columns, parties.items()):
             div[data-testid="stVerticalBlock"] div:has(div.fixed-header) {
                 position: sticky;
                 top: 2.875rem;
-                background-color: white;
                 z-index: 999;
             }
             .fixed-header {
