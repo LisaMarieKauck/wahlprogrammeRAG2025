@@ -78,14 +78,17 @@ for col, (party, document) in zip(columns, parties.items()):
         st.markdown(
             """
         <style>
-            div[data-testid="stVerticalBlock"] div:has(div.fixed-header) {
+            @media (min-width: 1025px){
+                div[data-testid="stVerticalBlock"] div:has(div.fixed-header) {
                 position: sticky;
                 top: 2.875rem;
                 z-index: 999;
-            }
-            .fixed-header {
-                border-bottom: 1px solid black;
-            }
+                }
+                .fixed-header {
+                    border-bottom: 1px solid black;
+                }
+            } 
+
         </style>
             """,
             unsafe_allow_html=True
