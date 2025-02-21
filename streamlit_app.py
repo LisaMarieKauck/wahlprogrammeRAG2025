@@ -7,14 +7,15 @@ from rag_system import invoke_rag_chain, parties, setup_retrieval, embedding_fun
 # Set Streamlit page configuration
 st.set_page_config(layout="wide")
 
-layout_mode = st.radio("Choose layout mode:", ["Stacked", "Fullscreen"], horizontal=True)
+layout_mode = st.radio("Spaltendarstellung:", ["Untereinander", "Nebeneinander"], horizontal=True)
 
 # Generate dynamic CSS based on user selection
-if layout_mode == "Stacked":
+if layout_mode == "Untereinander":
     css = """
         <style>
-            .st-emotion-cache-1y4p8pa { 
-                flex: 1 1 100% !important; /* Forces columns to stack */
+            .stColumns [data-testid="stVerticalBlock"] {
+                display: flex;
+                flex-direction: column !important; /* Forces columns to stack */
                 max-width: 100% !important;
             }
         </style>
@@ -22,8 +23,9 @@ if layout_mode == "Stacked":
 else:
     css = """
         <style>
-            .st-emotion-cache-1y4p8pa { 
-                flex: 1 1 auto !important; /* Allows columns to be next to each other */
+            .stColumns [data-testid="stVerticalBlock"] {
+                display: flex;
+                flex-direction: row !important; /* Keeps columns side by side */
             }
         </style>
     """
