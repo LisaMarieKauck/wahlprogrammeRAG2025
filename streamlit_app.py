@@ -83,27 +83,28 @@ for idx, (party, document) in enumerate(parties.items()):
         parteiname = document['name']
         header = st.container()
         header.subheader(parteiname)
-        header.write("""<div class='fixed-header'/>""", unsafe_allow_html=True)
+        if layout_mode == "Nebeneinander":
+            header.write("""<div class='fixed-header'/>""", unsafe_allow_html=True)
 
-        ### Custom CSS for the sticky header
-        st.markdown(
-            """
-        <style>
-            @media (min-width: 1025px){
-                div[data-testid="stVerticalBlock"] div:has(div.fixed-header) {
-                position: sticky;
-                top: 2.875rem;
-                z-index: 999;
-                }
-                .fixed-header {
-                    border-bottom: 1px solid black;
-                }
-            } 
+            ### Custom CSS for the sticky header
+            st.markdown(
+                """
+            <style>
+                @media (min-width: 1025px){
+                    div[data-testid="stVerticalBlock"] div:has(div.fixed-header) {
+                    position: sticky;
+                    top: 2.875rem;
+                    z-index: 999;
+                    }
+                    .fixed-header {
+                        border-bottom: 1px solid black;
+                    }
+                } 
 
-        </style>
-            """,
-            unsafe_allow_html=True
-        )
+            </style>
+                """,
+                unsafe_allow_html=True
+            )
         
 query = st.chat_input("Stellen Sie jetzt eine Frage!")
 
