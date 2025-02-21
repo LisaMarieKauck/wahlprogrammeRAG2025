@@ -7,29 +7,6 @@ from rag_system import invoke_rag_chain, parties, setup_retrieval, embedding_fun
 # Set Streamlit page configuration
 st.set_page_config(layout="wide")
 
-layout_mode = st.radio("Spaltendarstellung:", ["Untereinander", "Nebeneinander"], horizontal=True)
-
-# Generate dynamic CSS based on user selection
-if layout_mode == "Untereinander":
-    css = """
-        <style>
-            .stColumns [data-testid="stVerticalBlock"] {
-                display: flex;
-                flex-direction: column !important; /* Forces columns to stack */
-                max-width: 100% !important;
-            }
-        </style>
-    """
-else:
-    css = """
-        <style>
-            .stColumns [data-testid="stVerticalBlock"] {
-                display: flex;
-                flex-direction: row !important; /* Keeps columns side by side */
-            }
-        </style>
-    """
-
 # Inject CSS into the app
 st.markdown(css, unsafe_allow_html=True)
 
@@ -59,6 +36,16 @@ if not OPENAI_API_KEY:
 # Main interface
 st.title("Wahlprogramme Chat Assistant")
 st.write("Chat mit den Wahlprogrammen für die Bundestagswahl 2025!")
+
+
+layout_mode = st.radio("Spaltendarstellung:", [ "Nebeneinander", "Untereinander"], horizontal=True)
+
+# Define dynamic columns based on layout choice
+if layout_mode == "Untereinander":
+    columns = [st.container() for _ in range(len(parties))]  # Use containers instead of columns to stack
+else:
+    columns = st.columns(len(parties))  # Use regular columns for side-by-side
+
 
 # Prompt the user to enter their API key
 #apikey = st.form("user_api_key")
@@ -92,8 +79,9 @@ st.write("Chat mit den Wahlprogrammen für die Bundestagswahl 2025!")
 #LLM = ChatGroq(groq_api_key=st.session_state.api_key, model_name="Llama3-8b-8192")
 
 # Dynamic columns for party answers
-columns = st.columns(len(parties))
-for col, (party, document) in zip(columns, parties.items()):
+#columns = st.columns(len(parties))
+for idx, (party, document) in enumerate(parties.items()):
+    col = columns[idx]
     with col:
         parteiname = document['name']
         header = st.container()
