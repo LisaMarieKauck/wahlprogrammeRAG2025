@@ -7,6 +7,19 @@ from rag_system import invoke_rag_chain, parties, setup_retrieval, embedding_fun
 # Set Streamlit page configuration
 st.set_page_config(layout="wide")
 
+# /* Adjust Streamlit's default mobile breakpoint */
+st.markdown("""
+    <style>
+        @media (max-width: 2880px) { /* Change 1200px to your desired breakpoint */
+            .block-container {
+                max-width: 100% !important;
+                padding-left: 10px !important;
+                padding-right: 10px !important;
+            }
+        }
+    </style>
+""", unsafe_allow_html=True)
+
 # Initialize session state
 if "messages" not in st.session_state:
     st.session_state.messages = {party: [] for party in parties}
