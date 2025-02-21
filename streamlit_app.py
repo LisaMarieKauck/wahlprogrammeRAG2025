@@ -10,7 +10,7 @@ st.set_page_config(layout="wide")
 # /* Adjust Streamlit's default mobile breakpoint */
 st.markdown("""
     <style>
-        @media (max-width: 1200px) { /* Adjust this breakpoint as needed */
+        @media (max-width: 3000px) { /* Adjust this breakpoint as needed */
             .st-emotion-cache-1y4p8pa { /* This targets column containers */
                 flex: 1 1 100% !important; /* Forces full width */
                 max-width: 100% !important; 
