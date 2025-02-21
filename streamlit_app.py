@@ -7,17 +7,29 @@ from rag_system import invoke_rag_chain, parties, setup_retrieval, embedding_fun
 # Set Streamlit page configuration
 st.set_page_config(layout="wide")
 
-# /* Adjust Streamlit's default mobile breakpoint */
-st.markdown("""
-    <style>
-        @media (max-width: 3000px) { /* Adjust this breakpoint as needed */
-            .st-emotion-cache-1y4p8pa { /* This targets column containers */
-                flex: 1 1 100% !important; /* Forces full width */
-                max-width: 100% !important; 
+layout_mode = st.radio("Choose layout mode:", ["Stacked", "Fullscreen"], horizontal=True)
+
+# Generate dynamic CSS based on user selection
+if layout_mode == "Stacked":
+    css = """
+        <style>
+            .st-emotion-cache-1y4p8pa { 
+                flex: 1 1 100% !important; /* Forces columns to stack */
+                max-width: 100% !important;
             }
-        }
-    </style>
-""", unsafe_allow_html=True)
+        </style>
+    """
+else:
+    css = """
+        <style>
+            .st-emotion-cache-1y4p8pa { 
+                flex: 1 1 auto !important; /* Allows columns to be next to each other */
+            }
+        </style>
+    """
+
+# Inject CSS into the app
+st.markdown(css, unsafe_allow_html=True)
 
 # Initialize session state
 if "messages" not in st.session_state:
