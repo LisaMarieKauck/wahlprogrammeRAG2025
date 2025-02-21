@@ -7,9 +7,6 @@ from rag_system import invoke_rag_chain, parties, setup_retrieval, embedding_fun
 # Set Streamlit page configuration
 st.set_page_config(layout="wide")
 
-# Inject CSS into the app
-st.markdown(css, unsafe_allow_html=True)
-
 # Initialize session state
 if "messages" not in st.session_state:
     st.session_state.messages = {party: [] for party in parties}
