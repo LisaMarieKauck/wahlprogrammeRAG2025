@@ -1,5 +1,7 @@
 # Wahlprogramme 2025 Chat Assistant
 
+App is avaiable here: https://chatwithwahlprogramme2025statup.streamlit.app/?embed_options=light_theme,show_toolbar 
+
 This project provides an interactive Streamlit-based chat assistant designed to answer questions about all Wahlprogramme for the Bundestagswahl 2025. It leverages a retrieval-augmented generation (RAG) system to fetch and present relevant information from the EU AI Act documents, using OpenAI and FAISS for document embedding and search functionalities. It is based on https://github.com/ingridstevens/EUAIAct:
 
 ![EU AI Act Chat Assistant](assets/euaiact-rag-chat.png)
